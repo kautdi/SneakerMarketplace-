@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/main.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+        @@include('blocks/header.html')
+      <div class="content">
+        <div class="container ">
+          <div class="cart">
+            <div class="cart__top">
+              <h2 class="content__title">@@include('../img/cart.svg') Корзина</h2>
+              <div class="cart__clear">
+                @@include('../img/trash.svg')
+                <span>Очистить корзину</span>
+              </div>
+            </div>
+            <div class="content__items">
+                @@include('blocks/cart-item.html')
+                @@include('blocks/cart-item.html')
+                @@include('blocks/cart-item.html')
+            </div>
+            <div class="cart__bottom">
+              <div class="cart__bottom-details">
+                <span> Всего пицц: <b>3 шт.</b> </span>
+                <span> Сумма заказа: <b>900 ₽</b> </span>
+              </div>
+              <div class="cart__bottom-buttons">
+                <a href="/" class="button button--outline button--add go-back-btn">
+                    @@include('../img/grey-arrow-left.svg')
+                  <span>Вернуться назад</span>
+                </a>
+                <div class="button pay-btn">
+                  <span>Оплатить сейчас</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

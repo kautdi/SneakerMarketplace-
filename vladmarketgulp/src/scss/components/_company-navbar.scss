@@ -1,0 +1,59 @@
+.company-navbar{
+
+    .navbar-items{
+
+        .navbar-link{
+            &__active{
+
+                .item{
+                    border: 1px solid #423FD7;
+                }
+            }
+            .link{
+
+                .item{
+                    width: 100%;
+                    background: white; 
+                    box-shadow: 0px 1px 5px -1px rgba(0, 0, 0, 0.25); 
+                    border-radius: 19px;
+                    display: flex;
+                    align-items: center;
+                    padding: 26px 28px 26px 28px;
+                    margin-bottom:14px ;
+                    &__zakaz{
+                        justify-content: space-between;
+                        background-color: #423FD7;
+                            h3{
+                                color: #fff;
+                                font-family: "Montserrat", sans-serif;
+                                font-size: 16px;
+                                margin-bottom: 14px;
+                            }
+                            p{
+                                color: #fff;
+                                font-family: "Montserrat", sans-serif;
+                                font-size: 12px;
+
+                                &.kolvo{
+                                    font-size: 20px;
+                                }
+                            }
+                            
+                            
+                    
+                    }
+                    .link-icon{
+
+                    }
+                    .link-name{
+                        color: #423FD7;
+                        font-weight: 600;
+                        font-family: "Montserrat", sans-serif;
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/main.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      @@include('blocks/header.html')
+      <div class="content">
+        <div class="container">
+        <div class="auth">
+          <div class="auth-choice">
+                <div class="choiceRoleBlock auth-choice__choiceRoleBlock">
+                    <div class="choice choiceRoleBlock-choice">
+                        <button class="button button--choice button--choice__active">
+                            Клиент
+                        </button>
+                        <button class="button button--choice">
+                            Компания
+                        </button>
+                    </div>
+                    <div class="choice choiceRoleBlcok-choice">
+                        <button class="button button--choice">
+                            Авторизация
+                        </button>
+                        <button class="button button--choice button--choice__active">
+                            Регистрация
+                        </button>
+                    </div>
+                </div>
+                <div class="auth-form">
+                    <form action="">
+                        <h2 class="content__title">Регистрация/Клиент</h2>
+                        <div class="inputBlock auth-form__inputBlock">
+                            <label for="email">Почта</label>
+                            <input type="email" name="email" id="email" placeholder="example@example.com">
+                        </div>
+                        <div class="inputBlock auth-form__inputBlock">
+                            <label for="password">Пароль</label>
+                            <input type="password" name="password" id="password" placeholder="password">
+                        </div>
+                        <div class="inputBlock auth-form__inputBlock">
+                            <label for="repassword">Повторите пароль</label>
+                            <input type="repassword" name="repassword" id="repassword" placeholder="password">
+                        </div>
+                        <button class="button button--submit">Регистрация</button>
+                    </form>
+                </div>
+                
+          </div>
+          <div class="companydescription">
+            <h2 class="content__main companydescription__content__main">Что такое SneakerShop?</h2>
+            <p class="content__desc companydescription__content__desc">Lorem ipsum dolor sit amet consectetur. Pellentesque accumsan risus tincidunt habitant non dis pellentesque ornare. Fusce augue id eu urna phasellus duis vitae. Tortor pretium porttitor amet sem posuere duis. Sed ut arcu auctor non. Tellus tincidunt vulputate suspendisse at at euismod volutpat vestibulum eget. Condimentum orci lacinia id suspendisse magna nunc sed convallis. Enim dolor cras erat id lorem eu nec semper. Tortor purus nec ac arcu bibendum. Eget consequat dolor dui luctus suscipit elementum turpis. Hac orci purus in vitae. Eu aliquam commodo potenti phasellus. Mollis facilisis diam leo tellus eget. Ornare eleifend sapien semper tristique tellus.</p>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+

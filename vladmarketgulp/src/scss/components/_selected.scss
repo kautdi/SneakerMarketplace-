@@ -1,0 +1,18 @@
+@import 'variables';
+
+select {
+    background-color: #EFEFEF;
+    border: 0px solid #EFEFEF;
+    border-radius: 16px;
+    padding: 15px 14px 15px 14px;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+
+    option{
+        background-color: #EFEFEF;
+        font-family: "Montserrat", sans-serif;
+        padding: 15px 14px 15px 14px;
+    }
+
+    
+}

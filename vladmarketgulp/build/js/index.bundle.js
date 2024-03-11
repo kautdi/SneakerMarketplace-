@@ -1,0 +1,1 @@
+document.getElementById("editBtn").addEventListener("click",(function(){console.log("open")}));
