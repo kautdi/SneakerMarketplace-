@@ -1,0 +1,94 @@
+@import '../variables';
+
+.sort {
+  position: relative;
+  &__label {
+    display: flex;
+    align-items: center;
+
+    .btn-sorting{
+      background-color: #ffffff;
+      outline: none;
+      border: 0px solid white;
+    }
+  }
+
+  &__popup {
+    display: none;
+    position: absolute;
+    z-index: 12;
+    right: 0;
+    margin-top: 15px;
+    background: #ffffff;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.09);
+    border-radius: 10px;
+    padding: 21px 17px;
+    width: 322px;
+
+    .btn-agree{
+        width: 100%;
+        background-color:#5D5FEF;
+        margin-top: 15px;
+    }
+
+    .sort-head {
+      color: #5D5FEF;
+      font-size: 22px;
+    }
+    
+    .input-block {
+      padding-top: 15px;
+    }
+    
+    .sort-label {
+      font-size: 20px;
+      margin-top: 15px;
+
+    }
+    
+    .input__price {
+      font-size: 16px;
+    }
+    
+    .sort-items {
+      // display: grid;
+      // grid-template-columns: 86px 86px 86px;
+      // grid-template-rows: 40px 40px 40px;
+      // grid-column-gap: 15px;
+      // grid-row-gap: 7px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .sort-item {
+      background-color: #f1f1f1;
+      padding: 7px 19px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgb(0, 0, 0);
+      font-size: 16px;
+      font-weight: 500;
+      
+
+      &:hover{
+        cursor: pointer;
+        border: 1px solid #5D5FEF;
+        padding: 6px 19px;
+      }
+
+      &__active{
+        border: 1px solid #5D5FEF;
+      }
+    }
+
+    &__active{
+      display: block;
+    }
+  }
+}
+
+
