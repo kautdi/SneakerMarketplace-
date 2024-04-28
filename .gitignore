@@ -1,0 +1,5 @@
+./server/node_modules
+./sneakerShop/node_modules
+
+./server/.env
+./sneakerShop/.env
