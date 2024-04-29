@@ -50,6 +50,14 @@ body {
         font-family: "Montserrat", sans-serif;
         text-align: justify;
     }
+    &__dontHaveHistory{
+        font-weight: 400;
+        font-size: 32px;
+        font-family: "Montserrat", sans-serif;
+        text-align: justify;
+        margin-top: 150px;
+        margin-left: 200px;
+    }
 }
 
 .container {
@@ -65,6 +73,9 @@ body {
             margin: 0;
         }
     }
+}
+.company-container{
+    display: flex;   
 }
 
 .cart {
@@ -496,21 +507,22 @@ body {
     background-color: #C5C5C5;
     margin-bottom: 25px;
 }
-
+.company-pages{
+    margin-left: 400px;
+}
 .company-navbar{
     width: 328px;
 }
 .company-profile{
     display: flex;
-    justify-content: flex-start;
+    flex-direction: column;
 
     .profile{
-        margin-left: auto;
-        margin-right: auto;
+        
         display: flex;
         flex-direction: column;
         align-items: center;
-        
+        margin-left: 200px;
 
         .inputBlock{
             margin-bottom: 8px;

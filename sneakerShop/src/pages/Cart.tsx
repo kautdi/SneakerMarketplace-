@@ -4,8 +4,12 @@ import { useSelector } from "react-redux";
 import { fetchTotalPricing, fetchCartItem } from "../redux/cart/asyncAction";
 import { selectCart } from "../redux/cart/selectors";
 import { useAppDispatch } from "../redux/store";
+import { selectAuth } from "../redux/auth/selectors";
+import { Link } from "react-router-dom";
+
 export const Cart: FC = () => {
     const { items, totalPrice, count } = useSelector(selectCart);
+    const { isAuth, role } = useSelector(selectAuth)
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -65,7 +69,14 @@ export const Cart: FC = () => {
                         <span>Вернуться назад</span>
                     </a>
                     <div className="button pay-btn">
-                        <span>Оплатить сейчас</span>
+                        {
+                            isAuth === true ? (
+                                <span>Оплатить сейчас</span>
+                            )
+                            : (
+                                <Link to={"/auth"}><span>Войдите, чтобы оплатить</span></Link>
+                            )
+                        }
                     </div>
                 </div>
             </div>

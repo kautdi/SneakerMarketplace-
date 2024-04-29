@@ -10,7 +10,7 @@ export const companyRegistration = createAsyncThunk(
     try {
       const { email, password } = params;
       const authData = await CompanyService.registration(email, password);
-      return authData
+      return authData.data;
     } catch (error) { 
       
       return error; 

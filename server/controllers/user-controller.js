@@ -127,43 +127,59 @@ class UserController {
     }
     async updateUserInfo(req, res, next) {
         const { iduser, firstname, lastname, email, password } = req.body;
+
         try {
-            const hashPassword = await bcrypt.hash(password, 10);
-    
+            let hashPassword = null; // Инициализируем хэш пароля значением null
+        
+            // Проверяем, был ли передан новый пароль
+            if (password !== "") {
+                // Если пароль не пустой, хешируем его
+                hashPassword = await bcrypt.hash(password, 10);
+            }
+        
+            // Формируем SQL-запрос с учетом пустого пароля
+            const query = `
+                UPDATE users 
+                SET firstname = $2, lastname = $3, email = $4 
+                ${password !== "" ? ', password = $5' : ''} 
+                WHERE iduser = $1 
+                RETURNING *
+            `;
+        
+            // Формируем массив параметров запроса с учетом пустого пароля
+            const queryParams = password !== "" ? [iduser, firstname, lastname, email, hashPassword] : [iduser, firstname, lastname, email];
+        
             // Обновляем информацию о пользователе
-            const updatedUser = await db.query(
-                `UPDATE users SET firstname = $2, lastname = $3, email = $4, password = $5 WHERE iduser = $1 RETURNING *`,
-                [iduser, firstname, lastname, email, hashPassword]
-            );
-    
+            const updatedUser = await db.query(query, queryParams);
+        
             // Проверяем, была ли успешно выполнена операция обновления
             if (!updatedUser.rows || updatedUser.rows.length === 0) {
-                return res.status(404).json({ error: 'User not found or update failed' });
+                return res.status(404).json({ error: 'Пользователь не найден или обновление не удалось' });
             }
-    
+        
             // Генерируем новые токены
             const accessToken = jwt.sign({ userId: updatedUser.rows[0].id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15s' });
             const refreshToken = jwt.sign({ userId: updatedUser.rows[0].id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '30s' });
-    
+        
             // Обновляем токены в таблице userstoken
             const updateToken = await db.query(
                 `UPDATE userstoken SET access = $2, refresh = $3 WHERE iduser = $1 RETURNING *`,
                 [updatedUser.rows[0].iduser, accessToken, refreshToken]
             );
-    
+        
             // Проверяем, была ли успешно выполнена операция обновления токенов
             if (!updateToken.rows || updateToken.rows.length === 0) {
-                return res.status(404).json({ error: 'Token update failed' });
+                return res.status(404).json({ error: 'Обновление токена не удалось' });
             }
-    
+        
             // Возвращаем обновленного пользователя
             res.json(updatedUser.rows[0]);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            console.error('Ошибка при обновлении пользователя:', error);
+            res.status(500).json({ error: 'Внутренняя ошибка сервера' });
         }
     }
-    async  updateDeliveryInfo(req, res, next) {
+    async updateDeliveryInfo(req, res, next) {
         const { iduser, country, city, street, home } = req.body;
         try {
             // Обновляем информацию о доставке пользователя
@@ -177,6 +193,7 @@ class UserController {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
+    
 }
 
 module.exports = new UserController();

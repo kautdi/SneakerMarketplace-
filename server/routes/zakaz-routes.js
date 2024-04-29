@@ -8,6 +8,7 @@ const router = new Router();
 router.get("/getAllZakaz", zakazController.getAllZakaz);
 router.post("/createZakaz", zakazController.createZakaz);
 router.post("/delete", zakazController.deleteZakaz);
+router.get("/getTovarsByUserId", zakazController.getTovarsByUserId);
 
 
 

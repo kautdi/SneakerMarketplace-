@@ -29,6 +29,10 @@ const updateAuthData = (state: AuthData, payload: AuthData | RefreshTokenData) =
     state.email = refreshTokenPayload.email ?? state.email;
     state.accessToken = refreshTokenPayload.accessToken ?? state.accessToken;
     state.refreshToken = refreshTokenPayload.refreshToken ?? state.refreshToken;
+    localStorage.setItem('accessToken', state.accessToken);
+    localStorage.setItem('refreshToken', state.refreshToken);
+    localStorage.setItem('iduser', `${state.iduser}`);
+    localStorage.setItem('idcompany', `${state.idcompany}`);
   }
 
   state.isAuth = true;

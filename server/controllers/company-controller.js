@@ -82,10 +82,10 @@ class CompanyController {
     }
     async refresh(req, res, next) {
         try {
-            const { idCompany, refreshToken } = req.body;
+            const { idcompany, refreshToken } = req.body;
     
             // Проверяем, существует ли пользователь с данным id
-            const companyToken = await db.query(`SELECT * FROM companytoken WHERE idcompany = $1`, [idCompany]);
+            const companyToken = await db.query(`SELECT * FROM companytoken WHERE idcompany = $1`, [idcompany]);
             if (companyToken.rows.length === 0) {
                 return res.status(404).json({ error: 'Comapny token not found' });
             }
@@ -96,20 +96,20 @@ class CompanyController {
             }
     
             // Создаем новый accessToken и refreshToken
-            const newAccessToken = jwt.sign({ companyId: idCompany }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-            const newRefreshToken = jwt.sign({ companyId: idCompany }, process.env.JWT_REFRESH_SECRET, { expiresIn: '30d' });
+            const newAccessToken = jwt.sign({ companyId: idcompany }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
+            const newRefreshToken = jwt.sign({ companyId: idcompany }, process.env.JWT_REFRESH_SECRET, { expiresIn: '30d' });
     
             // Обновляем токены в базе данных
             const updatedCompanyToken = await db.query(
                 `UPDATE companytoken SET access = $2, refresh = $3 WHERE idcompany = $1 RETURNING *`,
-                [idCompany, newAccessToken, newRefreshToken]
+                [idcompany, newAccessToken, newRefreshToken]
             );
     
             if (!updatedCompanyToken.rows || updatedCompanyToken.rows.length === 0) {
                 return res.status(500).json({ error: 'Token update failed' });
             }
     
-            return res.json({idcomapny: idCompany, accessToken: newAccessToken, refreshToken: newRefreshToken });
+            return res.json({idcompany: idcompany, accessToken: newAccessToken, refreshToken: newRefreshToken });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ error: 'Internal Server Error' });
@@ -125,42 +125,101 @@ class CompanyController {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
-    async  updateCompanyInfo(req, res, next) {
+    async updateCompanyInfo(req, res, next) {
         const { idCompany, name, description, email, password } = req.body;
+    
         try {
-            const hashPassword = await bcrypt.hash(password, 10);
+            let hashPassword = null;
     
-            // Update company information
-            const updatedCompany = await db.query(
-                `UPDATE company SET name = $2, description = $3, email = $4, password = $5 WHERE idCompany = $1 RETURNING *`,
-                [idCompany, name, description, email, hashPassword]
-            );
-    
-            // Check if the update operation was successful
-            if (!updatedCompany.rows || updatedCompany.rows.length === 0) {
-                return res.status(404).json({ error: 'Company not found or update failed' });
+            // Проверяем, был ли передан новый пароль
+            if (password !== "") {
+                // Если пароль не пустой, хешируем его
+                hashPassword = await bcrypt.hash(password, 10);
             }
     
-            // Generate new tokens
+            // Обновляем информацию о компании
+            const query = `
+                UPDATE company 
+                SET name = $2, description = $3, email = $4 
+                ${password !== "" ? ', password = $5' : ''} 
+                WHERE idCompany = $1 
+                RETURNING *
+            `;
+    
+            // Формируем массив параметров запроса с учетом пустого пароля
+            const queryParams = password !== "" ? [idCompany, name, description, email, hashPassword] : [idCompany, name, description, email];
+    
+            // Обновляем информацию о компании
+            const updatedCompany = await db.query(query, queryParams);
+    
+            // Проверяем, была ли успешно выполнена операция обновления
+            if (!updatedCompany.rows || updatedCompany.rows.length === 0) {
+                return res.status(404).json({ error: 'Компания не найдена или обновление не удалось' });
+            }
+    
+            // Генерируем новые токены
             const accessToken = jwt.sign({ companyId: updatedCompany.rows[0].idCompany }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15s' });
             const refreshToken = jwt.sign({ companyId: updatedCompany.rows[0].idCompany }, process.env.JWT_REFRESH_SECRET, { expiresIn: '30s' });
     
-            // Update tokens in the CompanyToken table
+            // Обновляем токены в таблице CompanyToken
             const updateToken = await db.query(
                 `UPDATE CompanyToken SET access = $2, refresh = $3 WHERE idCompany = $1 RETURNING *`,
                 [updatedCompany.rows[0].idCompany, accessToken, refreshToken]
             );
     
-            // Check if the token update operation was successful
+            // Проверяем, была ли успешно выполнена операция обновления токенов
             if (!updateToken.rows || updateToken.rows.length === 0) {
-                return res.status(404).json({ error: 'Token update failed' });
+                return res.status(404).json({ error: 'Обновление токена не удалось' });
             }
     
-            // Return the updated company
+            // Возвращаем обновленную компанию
             res.json(updatedCompany.rows[0]);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+        }
+    }
+    async  getTovarsByCompanyId(req, res, next) {
+        try {
+            const { idcompany } = req.query;
+    
+            // Проверяем, был ли передан корректный идентификатор компании
+            if (!idcompany) {
+                return res.status(400).json({ error: 'Необходимо указать идентификатор компании' });
+            }
+    
+            let query = `
+                SELECT 
+                    Tovars.idtovar AS idtovar,
+                    Tovars.name AS tovar_name,
+                    Tovars.description AS tovar_description,
+                    Tovars.img AS tovar_img,
+                    Tovars.price AS tovar_price,
+                    company.name AS company_name,
+                    brands.name AS brand_name,
+                    colors.color AS color_name,
+                    sizes.size AS size_value
+                FROM 
+                    Tovars
+                JOIN 
+                    company ON Tovars.idCompany = company.idCompany
+                JOIN 
+                    brands ON Tovars.idBrand = brands.idBrand
+                JOIN 
+                    TovarsZakaz ON Tovars.idtovar = TovarsZakaz.idTovar
+                JOIN 
+                    colors ON TovarsZakaz.idColor = colors.idColor
+                JOIN 
+                    sizes ON TovarsZakaz.idSize = sizes.idSize
+                WHERE 
+                    Tovars.idCompany = $1
+            `;
+    
+            const tovars = await db.query(query, [idcompany]);
+    
+            return res.json(tovars.rows);
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
         }
     }
 

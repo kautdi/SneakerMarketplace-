@@ -129,6 +129,45 @@ class ZakazController {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
+    async  getTovarsByUserId(req, res, next) {
+        try {
+            const { iduser } = req.query;
+            let query = `
+                SELECT 
+                    Tovars.idtovar AS idtovar,
+                    Tovars.name AS tovar_name,
+                    Tovars.description AS tovar_description,
+                    Tovars.img AS tovar_img,
+                    Tovars.price AS tovar_price,
+                    company.name AS company_name,
+                    brands.name AS brand_name,
+                    colors.color AS color_name,
+                    sizes.size AS size_value
+                FROM 
+                    zakaz
+                JOIN 
+                    TovarsZakaz ON zakaz.idzakaz = TovarsZakaz.idzakaz
+                JOIN 
+                    tovars AS Tovars ON TovarsZakaz.idTovar = Tovars.idTovar
+                JOIN 
+                    company ON Tovars.idCompany = company.idCompany
+                JOIN 
+                    brands ON Tovars.idBrand = brands.idBrand
+                JOIN 
+                    colors ON TovarsZakaz.idColor = colors.idColor
+                JOIN 
+                    sizes ON TovarsZakaz.idSize = sizes.idSize
+                WHERE 
+                    zakaz.idUser = $1
+            `;
+    
+            const tovars = await db.query(query, [iduser]);
+    
+            return res.json(tovars.rows);
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
+        }
+    }
     
 
 }

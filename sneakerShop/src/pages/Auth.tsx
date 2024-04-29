@@ -1,9 +1,8 @@
-import { FC, MouseEvent, useState } from "react";
+import { FC, useState } from "react";
 import { useAppDispatch } from "../redux/store";
 import { companyLogin, companyRegistration, userLogin, userRegistration } from "../redux/auth/asyncAction";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../redux/auth/selectors";
-import { setAuth } from "../redux/auth/slice";
 
 export const Auth: FC = () => {
     const [email, setEmail] = useState<string>("")
@@ -39,11 +38,7 @@ export const Auth: FC = () => {
             const actionCreator = authActions[role as keyof typeof authActions][authType as keyof typeof authActions[typeof role]];
             if (actionCreator) {
                 dispatch(actionCreator({ email, password }));
-                dispatch(setAuth(true))
             }
-        
-
-        
     }
 
     return (
