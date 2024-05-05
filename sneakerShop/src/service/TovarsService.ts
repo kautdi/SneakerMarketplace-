@@ -3,12 +3,15 @@ import $api, { TOVARS_URL } from "../http";
 
 export default class TovarsService{
 
-    static async getSneakers(sizes: number[], brands: number[], idcompanys: object, colors: object, name: string, price:number) {
-        const brandsStr = brands.join(',');
+    static async getSneakers(sizes: number[], brands: number[], idcompanys: number, colors: object, name: string, price:number) {
+        let brandsStr = brands.join(',');
         const sizesStr = sizes.join(',');
-    
-        return $api.get(`${TOVARS_URL}/sneakers?name=${name}&sizes=${sizesStr}&brands=${brands}&idcompanys=${idcompanys}&colors=${colors}&price=${price}`);
+        if (brands[0] === 0 || Number.isNaN(brands[0])){
+            brandsStr = ''
+        }
+        return $api.get(`${TOVARS_URL}/sneakers?name=${name}&sizes=${sizesStr}&brands=${brandsStr}&idcompanys=${idcompanys}&colors=${colors}&price=${price}`);
     }
+    
     static async getOneSneaker(idTovar:number){
         return $api.post(`${TOVARS_URL}/sneakerOne`, {idTovar:idTovar})
     }

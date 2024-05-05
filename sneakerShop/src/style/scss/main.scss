@@ -77,7 +77,12 @@ body {
 .company-container{
     display: flex;   
 }
-
+.sortingblock{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 60px;
+}
 .cart {
     &__top {
         display: flex;

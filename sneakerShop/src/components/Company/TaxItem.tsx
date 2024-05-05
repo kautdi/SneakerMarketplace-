@@ -8,7 +8,6 @@ export const TaxItem: FC<ITax> = ({idtovar, tovar_name, tovar_description, tovar
     const taxAmount = calculatePercent(tovar_price, percent);
 
     return (
-        
         <div key={idtovar} className="pizza-block pizza-block__tax">
             <img
                 className="pizza-block__image"

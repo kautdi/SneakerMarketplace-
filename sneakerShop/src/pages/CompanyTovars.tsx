@@ -1,29 +1,41 @@
 import { FC, useEffect, useState } from 'react';
 import CompanyService from '../service/CompanyService';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectAuth } from '../redux/auth/selectors';
 import { ISneaker } from '../models/ISneaker';
 import { SneakerItem } from '../components/Main/SneakerItem';
 import { TovarItem } from '../components/Company/TovarsItem';
+import SortingBlock from '../components/Company/Sorting';
+import { selectCompanyFilter } from '../redux/companyfilter/selectors';
+import TovarsService from '../service/TovarsService';
+
 
 const CompanyTovars: FC = () => {
   const { idcompany } = useSelector(selectAuth)
   const [sneakers, setSneakers] = useState<ISneaker[]>([])
+  const dispatch = useDispatch();
+  const {search, brands} = useSelector(selectCompanyFilter);
 
 
-  async function fetchCompanyTovars() {
-    const response = await CompanyService.getCompanyTovars(idcompany);
-    setSneakers(response.data);
-  }
-  useEffect(()=>{
-    fetchCompanyTovars();
-  },[])   
+  useEffect(() => {
+    async function getSneakers(){
+      const brandsArray = [];
+      brandsArray.push(brands)
+      console.log(brandsArray)
+      const response =  await TovarsService.getSneakers([], brandsArray, idcompany, [], search, 0);
+      setSneakers(response.data)
+    }
+    getSneakers();
+}, [search, brands, idcompany]);
 
   return (
+    <>
+    <SortingBlock/>
     <div className="content__items">
       {
         sneakers.map((sneaker, index) => {
           return (
+            <>
             <TovarItem key={sneaker.idtovar || index}
             idtovar={sneaker.idtovar}
             idcompany={sneaker.idcompany}
@@ -36,11 +48,13 @@ const CompanyTovars: FC = () => {
             sizes={sneaker.sizes} 
             colors={sneaker.colors} 
             brand_name={sneaker.brand_name} />
+            </>
           );
         })
       }
 
     </div>
+    </>
   );
 }
 
