@@ -1,0 +1,140 @@
+import React, { FC, useState } from 'react';
+import { selectAuth } from '../../redux/auth/selectors';
+import { useSelector } from 'react-redux';
+import TovarsService from '../../service/TovarsService';
+
+interface ModalEditProps {
+    active: boolean;
+    setActive: (active: boolean) => void;
+}
+
+const ModalAdd: FC<ModalEditProps> = ({ active, setActive }) => {
+    const [name, setName] = useState<string>('');
+    const { idcompany } = useSelector(selectAuth)
+    const [description, setDescription] = useState<string>('');
+    const [brand, setBrand] = useState<string>('');
+    const [price, setPrice] = useState<string>('');
+    const [selectedSizes, setSelectedSizes] = useState<number[]>([]);
+    const [selectedColors, setSelectedColors] = useState<number[]>([]);
+
+    const sizes = [
+        { id: 1, size: 36 },
+        { id: 2, size: 37 },
+        { id: 3, size: 38 },
+        { id: 4, size: 39 },
+        { id: 5, size: 40 },
+        { id: 6, size: 41 },
+        { id: 7, size: 42 },
+        { id: 8, size: 43 },
+        { id: 9, size: 44 },
+    ];
+
+    const colors = [
+        { id: 1, color: "black" },
+        { id: 2, color: "white" },
+        { id: 3, color: "blue" },
+        { id: 4, color: "grey" },
+        { id: 5, color: "red" },
+        { id: 6, color: "orange" },
+        { id: 7, color: "green" },
+    ];
+
+    const handleSizeSelection = (id: number) => {
+        if (selectedSizes.includes(id)) {
+            setSelectedSizes(selectedSizes.filter(sizeId => sizeId !== id));
+        } else {
+            setSelectedSizes([...selectedSizes, id]);
+        }
+    };
+
+    const handleColorSelection = (id: number) => {
+        if (selectedColors.includes(id)) {
+            setSelectedColors(selectedColors.filter(colorId => colorId !== id));
+        } else {
+            setSelectedColors([...selectedColors, id]);
+        }
+    };
+
+    async function handleAddToCart()  {
+        const item = {
+            idCompany:idcompany,
+            name:name,
+            img: "https://cdn.shopify.com/s/files/1/2358/2817/products/air-jordan-1-low-og-sp-travis-scott-olive-1.png?v=1679486047&width=1940",
+            description:description,
+            brandName:brand,
+            price: parseInt(price),
+            sizes: selectedSizes,
+            color: selectedColors
+          };
+        const res = await TovarsService.createTovars(item)
+        console.log(res.data)
+        window.location.reload(); window.location.reload(); window.location.reload();
+    };
+
+    return (
+        <div className={`modal modal--edit ${active ? 'modal__active' : ""}`}  >
+            <div className="modal-body">
+                <div className="modal-top">
+                    <h3 className="modal__title">
+                        Добавление товара
+                    </h3>
+                    <p className="close-modal" onClick={()=> setActive(!active)}>
+                        x
+                    </p>
+                </div>
+                <div className="content modal__content">
+                    <form>
+                        <div className="modal-form">
+                        <div className="avtr profile__avtr">
+                            <img src="" alt="" />
+                        </div>
+                            <div className="inputBlock auth-form__inputBlock">
+                                <label>Название</label>
+                                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Название товара" />
+                            </div>
+                        </div>
+                        <div className="modal-form">
+                            <div className="inputBlock auth-form__inputBlock">
+                                <label>Описание</label>
+                                <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Описание товара"></textarea>
+                            </div>
+                        </div>
+                        <div className="modal-form">
+                            <div className="inputBlock auth-form__inputBlock">
+                                <label>Бренд</label>
+                                <input type="text" value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="Бренд товара" />
+                            </div>
+                        </div>
+                        <div className="modal-form">
+                            <div className="inputBlock auth-form__inputBlock">
+                                <label>Цена</label>
+                                <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Цена" />
+                            </div>
+                        </div>
+                    </form>
+                    <div className="modal__sizeColor">
+                        <div className="colorblock tovarPage__colorblock">
+                            <h2 className="content__title">Доступные цвета</h2>
+                            <div className="colors-row">
+                                {colors.map((color) => (
+                                    <div key={color.id} className={`color color__${color.color } ${selectedColors.includes(color.id) ? 'color__active' : ''}`} onClick={() => handleColorSelection(color.id)}></div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="sizeblock">
+                            <h2 className="content__title">Доступные размеры</h2>
+                            <div className="size-row">
+                                {sizes.map((size) => (
+                                    <div key={size.id} className={`size-item ${selectedSizes.includes(size.id) ? 'size-item__active' : ''}`} onClick={() => handleSizeSelection(size.id)}><p>{size.size}</p></div>
+                                ))}
+                            </div>
+                        </div>
+                        <button className="button button--submit" onClick={handleAddToCart}>Добавить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ModalAdd;

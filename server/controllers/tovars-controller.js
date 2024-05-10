@@ -219,29 +219,53 @@ class TovarsController {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
     }
-    async  createTovars(req, res) {
-        const { idCompany, name, description, idbrand, img, price, color, sizes } = req.body;
+    async  createTovar(req, res) {
+        const { idCompany, name, description, brandName, img, price, color, sizes } = req.body;
     
         try {
-            // Insert into tovars table
+            // Check if brand exists
+            let brandId;
+            const brandQuery = `
+                SELECT idBrand FROM brands
+                WHERE name = $1`;
+            const brandResult = await db.query(brandQuery, [brandName]);
+            // console.log(brandResult.rows[0].idbrand)
+            if (brandResult.rows.length > 0) {
+                brandId = brandResult.rows[0].idBrand;
+               
+            } else {
+                // console.log(brandId)
+                const newBrandQuery = `
+                    INSERT INTO brands (name)
+                    VALUES ($1)
+                    RETURNING idbrand`;
+                const newBrandValues = [brandName];
+                const newBrandResult = await db.query(newBrandQuery, newBrandValues);
+                // brandId = newBrandResult.rows[0].idbrand;
+                console.log(newBrandQuery)
+                console.log(newBrandResult.rows[0].idbrand)
+            }
+            
+    
+            
             const newTovarQuery = `
                 INSERT INTO tovars (idCompany, name, description, img, idBrand, price)
                 VALUES ($1, $2, $3, $4, $5, $6)
                 RETURNING idTovar`;
-            const newTovarValues = [idCompany, name, description, img, idbrand, price];
+            const newTovarValues = [idCompany, name, description, img, brandId, price];
             const newTovarResult = await db.query(newTovarQuery, newTovarValues);
-            const newTovarId = newTovarResult.rows[0].idTovar;
-    
-            // Insert into TovarsSize table
+            const newTovarId = newTovarResult.rows[0].idtovar;
+            console.log(sizes)
+            
             for (const size of sizes) {
                 const newSizeQuery = `
-                    INSERT INTO TovarsSize (idTovar, idSize)
+                    INSERT INTO tovarssize (idtovar, idsize)
                     VALUES ($1, $2)`;
                 const newSizeValues = [newTovarId, size];
                 await db.query(newSizeQuery, newSizeValues);
             }
     
-            // Insert into TovarsColor table
+            
             for (const clr of color) {
                 const newColorQuery = `
                     INSERT INTO TovarsColor (idTovar, idColor)
@@ -250,32 +274,48 @@ class TovarsController {
                 await db.query(newColorQuery, newColorValues);
             }
     
-            res.status(201).json({ message: 'Tovars created successfully' });
+            res.status(200).json({ message: 'Tovar created successfully', idTovar: newTovarId });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
     async  updateTovars(req, res) {
-        const { idTovar } = req.body;
-        const { idCompany, name, description, idbrand, img, price, color, sizes } = req.body;
+        const { idTovar, idCompany, name, description, brandName, img, price, color, sizes } = req.body;
     
         try {
+            let brandId;
+            // Check if brand exists
+            const brandQuery = `
+                SELECT idBrand FROM brands
+                WHERE name = $1`;
+            const brandResult = await db.query(brandQuery, [brandName]);
+            if (brandResult.rows.length > 0) {
+                brandId = brandResult.rows[0].idBrand;
+            } else {
+                // If brand doesn't exist, insert it
+                const newBrandQuery = `
+                    INSERT INTO brands (name)
+                    VALUES ($1)
+                    RETURNING idbrand`;
+                const newBrandValues = [brandName];
+                const newBrandResult = await db.query(newBrandQuery, newBrandValues);
+                brandId = newBrandResult.rows[0].idBrand;
+            }
+    
             // Update tovars table
             const updateTovarQuery = `
                 UPDATE tovars
                 SET idCompany = $1, name = $2, description = $3, img = $4, idBrand = $5, price = $6
                 WHERE idTovar = $7`;
-            const updateTovarValues = [idCompany, name, description, img, idbrand, price, idTovar];
+            const updateTovarValues = [idCompany, name, description, img, brandId, price, idTovar];
             await db.query(updateTovarQuery, updateTovarValues);
     
             // Update TovarsSize table
-            // First, delete existing records
             const deleteSizeQuery = `
                 DELETE FROM TovarsSize
                 WHERE idTovar = $1`;
             await db.query(deleteSizeQuery, [idTovar]);
-            // Then, insert new records
             for (const size of sizes) {
                 const newSizeQuery = `
                     INSERT INTO TovarsSize (idTovar, idSize)
@@ -285,12 +325,10 @@ class TovarsController {
             }
     
             // Update TovarsColor table
-            // First, delete existing records
             const deleteColorQuery = `
                 DELETE FROM TovarsColor
                 WHERE idTovar = $1`;
             await db.query(deleteColorQuery, [idTovar]);
-            // Then, insert new records
             for (const clr of color) {
                 const newColorQuery = `
                     INSERT INTO TovarsColor (idTovar, idColor)

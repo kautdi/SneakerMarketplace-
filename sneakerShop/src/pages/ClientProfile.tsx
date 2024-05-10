@@ -29,7 +29,6 @@ const ClientProfile: FC = () => {
             setHome(userData.data?.home || "");
             setStreet(userData.data?.street || "");
         }
-    
         fetchData();
     }, [id]);
 
@@ -43,10 +42,7 @@ const ClientProfile: FC = () => {
         } catch (error) {
             console.log(error)
         }
-       
-
     }
-
     
     return (
         <div className="client-profile">

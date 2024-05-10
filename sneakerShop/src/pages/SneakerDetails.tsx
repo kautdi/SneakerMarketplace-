@@ -16,6 +16,8 @@ export const SneakerDetails: FC = () => {
 
     const { items} = useSelector(selectCart);
 
+    
+
     function translateColorToEnglish(color: string): string {
         switch (color) {
             case 'Красные':

@@ -13,7 +13,7 @@ router.get("/sizes", tovarsController.getAllSize);
 router.get("/brands", tovarsController.getAllBrands);
 router.get("/colors", tovarsController.getAllColor);
 
-router.post("/createSneaker", tovarsController.createTovars);
+router.post("/createSneaker", tovarsController.createTovar);
 router.post("/updateSneaker", tovarsController.updateTovars);
 router.post("/deleteSneaker", tovarsController.deleteTovars);
 

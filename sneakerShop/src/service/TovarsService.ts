@@ -27,6 +27,14 @@ export default class TovarsService{
     static async getColors( ){
         return $api.get(`${TOVARS_URL}/sizes`)
     }
-
+    static async createTovars(tovar:object){
+        return $api.post(`${TOVARS_URL}/createSneaker`,tovar)
+    }
+    static async updateTovars(tovar:object){
+        return $api.post(`${TOVARS_URL}/updateSneaker`,tovar)
+    }
+    static async deleteTovars(idTovar:number){
+        return $api.post(`${TOVARS_URL}/deleteSneaker`,{idTovar:idTovar})
+    }
 }
 

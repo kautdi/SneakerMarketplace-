@@ -16,6 +16,7 @@ import CompanyProfile from './pages/CompanyProfile'
 import CompanyTax from './pages/CompanyTax'
 import CompanyTovars from './pages/CompanyTovars'
 import CompanyZakazs from './pages/CompanyZakazs'
+import { Order } from './pages/Order'
 
 function App() {
   const dispatch = useAppDispatch();
@@ -51,6 +52,7 @@ function App() {
               <Route path="/auth" element={<Auth />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/clientprofile/:id" element={<ClientProfile />} />
+              <Route path="/order" element={<Order />} />
             </Routes>
           ) : role === 'company' ? (
             <div className="company-container">

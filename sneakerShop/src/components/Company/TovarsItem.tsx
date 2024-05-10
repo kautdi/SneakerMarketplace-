@@ -5,7 +5,9 @@ import { fetchCartItem, fetchTotalPricing } from '../../redux/cart/asyncAction';
 import { useSelector } from 'react-redux';
 import { selectCart } from '../../redux/cart/selectors';
 import { Link } from 'react-router-dom';
-import { ModalEdit } from './ModalEdit';
+import ModalEdit from './ModalEdit';
+
+
 
 export const TovarItem: FC<ISneaker> = ({ idtovar, name, price, img, sizes, colors }) => {
   const { items} = useSelector(selectCart);
@@ -45,7 +47,7 @@ export const TovarItem: FC<ISneaker> = ({ idtovar, name, price, img, sizes, colo
       </div>
     </div>
 
-    <ModalEdit active={activeModal}/>
+    <ModalEdit active={activeModal} setActive={setActiveModal} idTovar={idtovar}/>
     </>
 
 
