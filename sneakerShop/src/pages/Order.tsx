@@ -8,6 +8,7 @@ import { selectAuth } from "../redux/auth/selectors";
 import { Link } from "react-router-dom";
 import { IUser } from "../models/IUser";
 import UserService from "../service/UserService";
+import ZakazService from "../service/ZakazService";
 export const Order: FC = () => {
     const [userInfo, setUserInfo] = useState<IUser>();
     const { items, totalPrice, count } = useSelector(selectCart);
@@ -29,7 +30,6 @@ export const Order: FC = () => {
         }
         fetchData();
     }, [iduser]);
-
     useEffect(() => {
         dispatch(fetchTotalPricing());
         dispatch(fetchCartItem());
@@ -38,6 +38,18 @@ export const Order: FC = () => {
         const cartItem = localStorage.removeItem('cart');
         dispatch(fetchCartItem());
         dispatch(fetchTotalPricing());
+    }
+    async function createZakaz (){
+        const zakaz ={
+            iduser:iduser,
+            country: country,
+            city:city,
+            street:street,
+            home: home,
+            tovars:items
+        }
+        const response = await ZakazService.createZakaz(zakaz)
+        console.log(response)
     }
     return (
         <div className="cart">
@@ -133,7 +145,7 @@ export const Order: FC = () => {
                         <span>Вернуться назад</span>
                     </a>
                     <div className="button pay-btn">
-                                <span>Оплатить сейчас</span>
+                                <span onClick={createZakaz}> Оплатить сейчас</span>
                     </div>
                 </div>
             </div>

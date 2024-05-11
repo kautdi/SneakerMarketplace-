@@ -77,35 +77,51 @@ class ZakazController {
             return res.status(500).json({error: error.message});
         }
     }
-    async  createZakaz(req, res, next) {
+    async createZakaz(req, res, next) {
         const { iduser, country, city, street, home, tovars } = req.body;
-    
+      
         try {
-            // Создаем новый заказ
-            const newZakazQuery = `
-                INSERT INTO zakaz (idUser, country, city, street, home)
-                VALUES ($1, $2, $3, $4, $5)
-                RETURNING idzakaz`;
-            const newZakazValues = [iduser, country, city, street, home];
-            const newZakazResult = await db.query(newZakazQuery, newZakazValues);
-            const orderId = newZakazResult.rows[0].idzakaz;
-    
-            // Для каждого товара в массиве tovars вставляем запись в таблицу TovarsZakaz
-            for (const tovar of tovars) {
-                const { idTovar, idColor, idSize } = tovar;
-                const newTovarZakazQuery = `
-                    INSERT INTO TovarsZakaz (idzakaz, idTovar, idColor, idSize)
-                    VALUES ($1, $2, $3, $4)`;
-                const newTovarZakazValues = [orderId, idTovar, idColor, idSize];
-                await db.query(newTovarZakazQuery, newTovarZakazValues);
-            }
-    
-            res.status(201).json({ message: 'Zakazs created successfully' });
+          // Создаем новый заказ
+          const newZakazQuery = `
+            INSERT INTO zakaz (idUser, country, city, street, home)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING idzakaz
+          `;
+          const newZakazValues = [iduser, country, city, street, home];
+          const newZakazResult = await db.query(newZakazQuery, newZakazValues);
+          const orderId = newZakazResult.rows[0].idzakaz;
+      
+          
+          for (const tovar of tovars) {
+            const { idtovar, colors, sizes } = tovar;
+            console.log(tovar)
+            
+            const getColorIdQuery = 'SELECT idColor FROM colors WHERE color = $1';
+            const getColorIdValues = colors;
+            console.log(getColorIdValues)
+            const colorResult = await db.query(getColorIdQuery, getColorIdValues);
+            const idColor = colorResult.rows[0].idcolor;
+      
+            
+            const getSizeIdQuery = 'SELECT idSize FROM sizes WHERE size = $1';
+            const getSizeIdValues = sizes;
+            const sizeResult = await db.query(getSizeIdQuery, getSizeIdValues);
+            const idSize = sizeResult.rows[0].idsize;
+            console.log(idSize)
+            const newTovarZakazQuery = `
+              INSERT INTO TovarsZakaz (idzakaz, idtovar, idcolor, idsize)
+              VALUES ($1, $2, $3, $4)
+            `;
+            const newTovarZakazValues = [orderId, idtovar, idColor, idSize];
+            await db.query(newTovarZakazQuery, newTovarZakazValues);
+          }
+      
+          res.status(201).json({ message: 'Zakazs created successfully' });
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'Internal Server Error' });
+          console.error(error);
+        //   res.status(500).json({ error: 'Internal Server Error' });
         }
-    }
+      }
     async  deleteZakaz(req, res, next) {
         const { idzakaz } = req.body;
         try {
