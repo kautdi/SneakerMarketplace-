@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { IUser } from "../models/IUser";
 import UserService from "../service/UserService";
 import ZakazService from "../service/ZakazService";
+import { setCart } from "../redux/cart/slice";
 export const Order: FC = () => {
     const [userInfo, setUserInfo] = useState<IUser>();
     const { items, totalPrice, count } = useSelector(selectCart);
@@ -50,6 +51,8 @@ export const Order: FC = () => {
         }
         const response = await ZakazService.createZakaz(zakaz)
         console.log(response)
+        localStorage.removeItem('cart');
+        window.location.href = "/";
     }
     return (
         <div className="cart">

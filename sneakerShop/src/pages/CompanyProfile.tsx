@@ -15,6 +15,7 @@ const CompanyProfile: FC = () => {
     async function updateInfo(){
       await CompanyService.updateCompanyInfo(idcompany, name, description, email, password);
     }
+
     
     useEffect(() => {
         async function fetchData() {
@@ -72,6 +73,7 @@ const CompanyProfile: FC = () => {
           </div>
         </div>
         <button className="button button--submit" onClick={updateInfo}>Сохранить</button>
+       
       </div>
       </div>
     );

@@ -291,7 +291,7 @@ class TovarsController {
                 WHERE name = $1`;
             const brandResult = await db.query(brandQuery, [brandName]);
             if (brandResult.rows.length > 0) {
-                brandId = brandResult.rows[0].idBrand;
+                brandId = brandResult.rows[0].idbrand;
             } else {
                 // If brand doesn't exist, insert it
                 const newBrandQuery = `

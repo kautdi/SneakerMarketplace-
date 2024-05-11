@@ -82,6 +82,7 @@ CREATE TABLE zakaz(
     city VARCHAR(255),
     street VARCHAR(255),
     home VARCHAR(255),
+    status VARCHAR(255),
     FOREIGN KEY (idUser) REFERENCES users(idUser)
 );
 

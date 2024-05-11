@@ -12,11 +12,11 @@ export const SneakerDetails: FC = () => {
     const [activeColor, setActiveColor] = useState<string>(sneaker?.colors[0] ?? '');
     const [activeSize, setActiveSize] = useState<number>(sneaker?.sizes[0] ?? 0);
     const dispatch = useAppDispatch();
-    const {id} = useParams();
+    const { id } = useParams();
 
-    const { items} = useSelector(selectCart);
+    const { items } = useSelector(selectCart);
 
-    
+
 
     function translateColorToEnglish(color: string): string {
         switch (color) {
@@ -39,9 +39,9 @@ export const SneakerDetails: FC = () => {
             default:
                 return color;
         }
-        
+
     }
-    async function getDetailsSneaker(){
+    async function getDetailsSneaker() {
         console.log(parseInt(id ?? '0'))
         const data = await TovarsService.getOneSneaker(parseInt(id ?? '0'));
         console.log(data.data)
@@ -49,34 +49,34 @@ export const SneakerDetails: FC = () => {
     }
     async function addToCart() {
         const item = {
-          idtovar:sneaker?.idtovar,
-          name:sneaker?.name,
-          price: parseInt(sneaker?.price ?? '0'),
-          sizes: [activeSize],
-          colors: [activeColor]
+            idtovar: sneaker?.idtovar,
+            name: sneaker?.name,
+            price: parseInt(sneaker?.price ?? '0'),
+            sizes: [activeSize],
+            colors: [activeColor]
         };
 
         const cartItem = localStorage.getItem('cart');
         const currentCart = cartItem ? JSON.parse(cartItem) : [];
-        const existingIndex = currentCart.findIndex((cartItem: any) => cartItem.idtovar === sneaker?.idtovar);
+        const existingIndex = currentCart.findIndex((cartItem: any) => cartItem.idtovar === sneaker?.idtovar && cartItem.sizes[0] === activeSize && cartItem.colors[0] === activeColor);
         if (existingIndex !== -1) {
-            currentCart.splice(existingIndex, 1); // Remove existing item
-          } else {
-            currentCart.push(item); // Add new item
-          }
-          localStorage.setItem('cart', JSON.stringify(currentCart));
+          currentCart.splice(existingIndex, 1); // Remove existing item
+        } else {
+          currentCart.push(item); // Add new item
+        }
+        localStorage.setItem('cart', JSON.stringify(currentCart));
         dispatch(fetchCartItem());
         dispatch(fetchTotalPricing());
-        
+
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getDetailsSneaker()
         console.log(activeColor)
         console.log(activeSize)
     }, [])
     return (
-            <div className="tovarPage">
+        <div className="tovarPage">
             <div className="tovar-picture">
                 <div className="tovarPage__mainPic">
                     <img src="https://cdn.shopify.com/s/files/1/2358/2817/products/air-jordan-1-low-og-sp-travis-scott-olive-1.png?v=1679486047&width=1940" alt="" />
@@ -94,7 +94,7 @@ export const SneakerDetails: FC = () => {
                     <div className="morePicBlock">
                         <img src="https://cdn.shopify.com/s/files/1/2358/2817/products/air-jordan-1-low-og-sp-travis-scott-olive-1.png?v=1679486047&width=1940" alt="" />
                     </div>
-                        
+
                 </div>
             </div>
             <div className="tovar-desc">
@@ -118,7 +118,7 @@ export const SneakerDetails: FC = () => {
                                 <div className={`color color__${translateColorToEnglish(color)} ${activeColor === color ? 'color__active' : ''}`} onClick={() => setActiveColor(color)}></div>
                             ))
                         }
-                       
+
                     </div>
                 </div>
                 <div className="sizeblock tovarPage__sizeblock">
@@ -131,14 +131,19 @@ export const SneakerDetails: FC = () => {
                         }
                     </select>
                 </div>
-                <div className="button button--add-to-cart" onClick={()=>addToCart()}>
-                <span>
-                    {
-                        items.some(item => Number(item.idtovar) === sneaker?.idtovar) ? 'Удалить' : 'Добавить'
-                    }
-                </span>
-                  </div>
+                <div className="button button--add-to-cart" onClick={() => addToCart()}>
+                    <span>
+                    {items.some(
+                    (item: any) =>
+                        Number(item.idtovar) === sneaker?.idtovar &&
+                        item.sizes[0] === activeSize &&
+                        item.colors[0] === activeColor
+                    )
+                    ? 'Удалить'
+                    : 'Добавить'}
+                    </span>
+                </div>
             </div>
-          </div>
+        </div>
     )
 }

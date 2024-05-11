@@ -473,13 +473,15 @@ body {
 .client-profile{
     display: flex;
     justify-content: space-between;
-    
+    align-items: flex-start;
+    gap:100px;
+
     &__profile{
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
         margin-right: 5px;
+        width: 100%;
         input{
             margin-bottom: 8px;
         }

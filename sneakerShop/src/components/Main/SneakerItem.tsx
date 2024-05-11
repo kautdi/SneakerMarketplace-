@@ -24,7 +24,7 @@ export const SneakerItem: FC<ISneaker> = ({ idtovar, name, price, img, sizes, co
     const cartItem = localStorage.getItem('cart');
     const currentCart = cartItem ? JSON.parse(cartItem) : [];
     
-    const existingIndex = currentCart.findIndex((cartItem: any) => cartItem.idtovar === idtovar);
+    const existingIndex = currentCart.findIndex((cartItem: any) => cartItem.idtovar === idtovar && cartItem.sizes[0] === activeSize && cartItem.colors[0] === activeColor);
     if (existingIndex !== -1) {
       currentCart.splice(existingIndex, 1); // Remove existing item
     } else {
@@ -64,25 +64,42 @@ export const SneakerItem: FC<ISneaker> = ({ idtovar, name, price, img, sizes, co
       
       <div className="pizza-block__bottom">
         <div className="pizza-block__price">от {price} ₽</div>
-        <div className={`button button--outline button--add ${items.some(item => Number(item.idtovar) === idtovar) ? 'button--add__active' : ''}`} onClick={()=>addToCart()}>
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10.8 4.8H7.2V1.2C7.2 0.5373 6.6627 0 6 0C5.3373 0 4.8 0.5373 4.8 1.2V4.8H1.2C0.5373 4.8 0 5.3373 0 6C0 6.6627 0.5373 7.2 1.2 7.2H4.8V10.8C4.8 11.4627 5.3373 12 6 12C6.6627 12 7.2 11.4627 7.2 10.8V7.2H10.8C11.4627 7.2 12 6.6627 12 6C12 5.3373 11.4627 4.8 10.8 4.8Z"
-              fill="white"
-            />
-          </svg>
-          <span>
-            {
-              items.some(item => Number(item.idtovar) === idtovar) ? 'Удалить' : 'Добавить'
-            }
-            </span>
-        </div>
+        <div
+  className={`button button--outline button--add ${
+    items.some(
+      (item: any) =>
+        Number(item.idtovar) === idtovar &&
+        item.sizes[0] === activeSize &&
+        item.colors[0] === activeColor
+    )
+      ? 'button--add__active'
+      : ''
+  }`}
+  onClick={() => addToCart()}
+>
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 12 12"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M10.8 4.8H7.2V1.2C7.2 0.5373 6.6627 0 6 0C5.3373 0 4.8 0.5373 4.8 1.2V4.8H1.2C0.5373 4.8 0 5.3373 0 6C0 6.6627 0.5373 7.2 1.2 7.2H4.8V10.8C4.8 11.4627 5.3373 12 6 12C6.6627 12 7.2 11.4627 7.2 10.8V7.2H10.8C11.4627 7.2 12 6.6627 12 6C12 5.3373 11.4627 4.8 10.8 4.8Z"
+      fill="white"
+    />
+  </svg>
+  <span>
+    {items.some(
+      (item: any) =>
+        Number(item.idtovar) === idtovar &&
+        item.sizes[0] === activeSize &&
+        item.colors[0] === activeColor
+    )
+      ? 'Удалить'
+      : 'Добавить'}
+  </span>
+</div>
       </div>
     </div>
   );

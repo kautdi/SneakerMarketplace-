@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 
 export const Cart: FC = () => {
     const { items, totalPrice, count } = useSelector(selectCart);
+    const { isAuth } = useSelector(selectAuth);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -68,7 +69,12 @@ export const Cart: FC = () => {
                         <span>Вернуться назад</span>
                     </a>
                     <div className="button pay-btn">
+                        {
+                            isAuth ?  (
                             <Link to={"/order"}><span>Оплатить</span></Link>
+                            ):  <Link to={"/auth"}><span>Войдите в аккаунт</span></Link>
+                        }
+                            
                     </div>
                 </div>
             </div>

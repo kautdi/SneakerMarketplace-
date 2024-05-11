@@ -39,6 +39,7 @@ export const Auth: FC = () => {
             if (actionCreator) {
                 dispatch(actionCreator({ email, password }));
             }
+            
     }
 
     return (

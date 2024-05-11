@@ -222,6 +222,52 @@ class CompanyController {
             return res.status(500).json({ error: error.message });
         }
     }
+    async getZakazCompany(req, res, next) {
+        try {
+          const { idcompany } = req.query;
+      
+          // Проверяем, был ли передан корректный идентификатор компании
+          if (!idcompany) {
+            return res.status(400).json({ error: 'Необходимо указать идентификатор компании' });
+          }
+      
+          let query = `
+            SELECT
+              z.idzakaz,
+              JSON_AGG(
+                JSON_BUILD_OBJECT(
+                  'idtovar', t.idtovar,
+                  'tovar_name', t.name,
+                  'tovar_description', t.description,
+                  'tovar_img', t.img,
+                  'tovar_price', t.price,
+                  'company_name', c.name,
+                  'brand_name', b.name,
+                  'color_name', co.color,
+                  'size_value', s.size
+                )
+              ) AS tovars
+            FROM
+              zakaz z
+              JOIN TovarsZakaz tz ON z.idzakaz = tz.idzakaz
+              JOIN Tovars t ON tz.idTovar = t.idtovar
+              JOIN company c ON t.idCompany = c.idCompany
+              JOIN brands b ON t.idBrand = b.idBrand
+              JOIN colors co ON tz.idColor = co.idColor
+              JOIN sizes s ON tz.idSize = s.idSize
+            WHERE
+              t.idCompany = $1
+            GROUP BY
+              z.idzakaz;
+          `;
+      
+          const tovars = await db.query(query, [idcompany]);
+          return res.json(tovars.rows);
+        } catch (error) {
+          return res.status(500).json({ error: error.message });
+        }
+      }
+
 
 }
 

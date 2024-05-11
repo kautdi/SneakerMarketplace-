@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CartItem, CartSliceState } from './types';
 import { fetchCartItem, fetchTotalPricing } from './asyncAction';
+import { ISneaker } from '../../models/ISneaker';
 
 
 
@@ -13,6 +14,9 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers:{
+    setCart(state, action) {
+      state.items = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchTotalPricing.pending, (state) => {
@@ -38,6 +42,6 @@ const cartSlice = createSlice({
     });
   },
 });
-
+export const { setCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

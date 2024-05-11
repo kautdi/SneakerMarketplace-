@@ -83,11 +83,11 @@ class ZakazController {
         try {
           // Создаем новый заказ
           const newZakazQuery = `
-            INSERT INTO zakaz (idUser, country, city, street, home)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO zakaz (idUser, country, city, street, home, status)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING idzakaz
           `;
-          const newZakazValues = [iduser, country, city, street, home];
+          const newZakazValues = [iduser, country, city, street, home, "Delivery"];
           const newZakazResult = await db.query(newZakazQuery, newZakazValues);
           const orderId = newZakazResult.rows[0].idzakaz;
       
@@ -158,7 +158,8 @@ class ZakazController {
                     company.name AS company_name,
                     brands.name AS brand_name,
                     colors.color AS color_name,
-                    sizes.size AS size_value
+                    sizes.size AS size_value,
+                    zakaz.status AS order_status
                 FROM 
                     zakaz
                 JOIN 
@@ -185,7 +186,6 @@ class ZakazController {
         }
     }
     
-
 }
 
 module.exports = new ZakazController();
