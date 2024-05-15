@@ -39,15 +39,15 @@ class ZakazController {
             `;
     
             if (iduser) {
-                query += ` WHERE zakaz.idUser = ${iduser}`; // Filter by iduser if provided
+                query += ` WHERE zakaz.idUser = ${iduser}`; 
             }
     
             if (idCompany) {
-                query += ` AND company.idCompany = ${idCompany}`; // Filter by idCompany if provided
+                query += ` AND company.idCompany = ${idCompany}`; 
             }
     
             if (status) {
-                query += ` AND zakaz.status = '${status}'`; // Filter by status if provided
+                query += ` AND zakaz.status = '${status}'`; 
             }
     
             const zakazs = await db.query(query);
@@ -82,15 +82,15 @@ class ZakazController {
       
         try {
           // Создаем новый заказ
-          const newZakazQuery = `
-            INSERT INTO zakaz (idUser, country, city, street, home, status)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            const newZakazQuery = `
+            INSERT INTO zakaz (idUser, country, city, street, home, status, date)
+            VALUES ($1, $2, $3, $4, $5, $6, CURRENT_DATE)
             RETURNING idzakaz
-          `;
-          const newZakazValues = [iduser, country, city, street, home, "Delivery"];
-          const newZakazResult = await db.query(newZakazQuery, newZakazValues);
-          const orderId = newZakazResult.rows[0].idzakaz;
-      
+            `;
+            const newZakazValues = [iduser, country, city, street, home, "Delivery"];
+            const newZakazResult = await db.query(newZakazQuery, newZakazValues);
+            const orderId = newZakazResult.rows[0].idzakaz;
+                
           
           for (const tovar of tovars) {
             const { idtovar, colors, sizes } = tovar;
@@ -185,7 +185,22 @@ class ZakazController {
             return res.status(500).json({ error: error.message });
         }
     }
+    async changeStatus(req, res, next) {
+        const { idzakaz } = req.body;
+        try {
+            const changeStatusQuery = `
+                UPDATE zakaz
+                SET status = $1
+                WHERE idzakaz = $2
+            `;
+            await db.query(changeStatusQuery, ['Complete', idzakaz]);
+        }
+        catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     
+    }
 }
 
 module.exports = new ZakazController();

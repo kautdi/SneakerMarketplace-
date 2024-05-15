@@ -76,7 +76,7 @@ export const Order: FC = () => {
             </div>
             <div className="content__items">
             {
-                items.map((item) => (
+                items.map((item:any) => (
                     <CartItem
                         idtovar={item.idtovar}
                         image={''}

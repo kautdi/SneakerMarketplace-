@@ -25,7 +25,7 @@ const CartItemComponent: FC<CartItem> = ({idtovar, image, name, sizes, colors, p
             <div className="cart__item-img">
                 <img
                     className="pizza-block__image"
-                    src={"https://cdn.shopify.com/s/files/1/2358/2817/products/air-jordan-1-low-og-sp-travis-scott-olive-1.png?v=1679486047&width=1940"}
+                    src={"../../../server/assets/air-jordan-1-low-og-sp-travis-scott-olive-1.webp"}
                     alt="Товар"
                 />
             </div>

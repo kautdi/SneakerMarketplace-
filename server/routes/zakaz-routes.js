@@ -11,6 +11,7 @@ router.post("/createZakaz", zakazController.createZakaz);
 router.post("/delete", zakazController.deleteZakaz);
 router.get("/getTovarsByUserId", zakazController.getTovarsByUserId);
 router.get("/getZakazCompany", companyController.getZakazCompany);
+router.post("/changeStatus",zakazController.changeStatus);
 
 
 module.exports = router;

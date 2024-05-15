@@ -7,11 +7,11 @@ const zakazRouter = require('./routes/zakaz-routes');
 require('dotenv').config();
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./swagger/swagger');
-
+const path = require('path');
 
 const PORT = process.env.PORT || 5050;
 const app = express();
-
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(express.json());
 app.use(cors({
     credentials: true,

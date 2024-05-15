@@ -72,6 +72,13 @@ function App() {
               <Route path="/sneaker-details/:id" element={<SneakerDetails />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/cart" element={<Cart />} />
+              
+              <Route path="/admin/login" element={<Cart />} />
+              <Route path="/admin" element={<Cart />} />
+              <Route path="/admin/zakazs" element={<Cart />} />
+              <Route path="/admin/companys" element={<Cart />} />
+              <Route path="/admin/tovars" element={<Cart />} />
+
             </Routes>
           )}
         </div>

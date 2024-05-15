@@ -43,10 +43,10 @@ export const Cart: FC = () => {
             </div>
             <div className="content__items">
             {
-                items.map((item) => (
+                items.map((item:any) => (
                     <CartItem
                         idtovar={item.idtovar}
-                        image={''}
+                        image={item.image}
                         name={item.name}
                         sizes={Array.isArray(item.sizes) ? item.sizes : []}
                         colors={Array.isArray(item.colors) ? item.colors : []} // Проверяем, является ли colors массивом

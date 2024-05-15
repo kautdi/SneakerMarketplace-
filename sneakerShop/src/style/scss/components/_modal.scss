@@ -6,6 +6,19 @@
     position: fixed;
     margin-left: -730px;
     top: 0px;
+
+    .avtr{
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img{
+            min-width: 100%;
+            min-height: 100%;
+            
+        }
+    }
     
     .modal-body{
         width: 800px;

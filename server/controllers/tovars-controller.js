@@ -1,4 +1,6 @@
 const db = require('../db');
+const fs = require('fs');
+const path = require('path');
 
 class TovarsController {
     async getAllTovars(req, res) {
@@ -223,7 +225,6 @@ class TovarsController {
         const { idCompany, name, description, brandName, img, price, color, sizes } = req.body;
     
         try {
-            // Check if brand exists
             let brandId;
             const brandQuery = `
                 SELECT idBrand FROM brands
@@ -280,7 +281,7 @@ class TovarsController {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
-    async  updateTovars(req, res) {
+    async updateTovars(req, res) {
         const { idTovar, idCompany, name, description, brandName, img, price, color, sizes } = req.body;
     
         try {
@@ -303,12 +304,24 @@ class TovarsController {
                 brandId = newBrandResult.rows[0].idBrand;
             }
     
+            // Construct the update query based on whether img is provided or not
+            let updateTovarQuery;
+            let updateTovarValues;
+            if (img !== "undefined") {
+                updateTovarQuery = `
+                    UPDATE tovars
+                    SET idCompany = $1, name = $2, description = $3, img = $4, idBrand = $5, price = $6
+                    WHERE idTovar = $7`;
+                updateTovarValues = [idCompany, name, description, img, brandId, price, idTovar];
+            } else {
+                updateTovarQuery = `
+                    UPDATE tovars
+                    SET idCompany = $1, name = $2, description = $3, idBrand = $4, price = $5
+                    WHERE idTovar = $6`;
+                updateTovarValues = [idCompany, name, description, brandId, price, idTovar];
+            }
+    
             // Update tovars table
-            const updateTovarQuery = `
-                UPDATE tovars
-                SET idCompany = $1, name = $2, description = $3, img = $4, idBrand = $5, price = $6
-                WHERE idTovar = $7`;
-            const updateTovarValues = [idCompany, name, description, img, brandId, price, idTovar];
             await db.query(updateTovarQuery, updateTovarValues);
     
             // Update TovarsSize table
@@ -358,12 +371,18 @@ class TovarsController {
                 DELETE FROM TovarsSize
                 WHERE idTovar = $1`;
             await db.query(deleteSizesQuery, [idTovar]);
+
+            const deleteTovarZakazQuery = `
+                DELETE FROM tovarszakaz
+                WHERE idTovar = $1`;
+            await db.query(deleteTovarZakazQuery, [idTovar]);
     
             // Delete from tovars table
             const deleteTovarQuery = `
                 DELETE FROM tovars
                 WHERE idTovar = $1`;
             await db.query(deleteTovarQuery, [idTovar]);
+
     
             res.status(200).json({ message: 'Tovars deleted successfully' });
         } catch (error) {
@@ -371,6 +390,16 @@ class TovarsController {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
+    async uploadImage (req, res) {
+        try {
+           if (req.file){
+            res.json(req.file);
+           }
+        } catch (error) {
+            console.error('Ошибка при загрузке изображения:', error);
+            res.status(500).json({ message: 'Внутренняя ошибка сервера.' });
+        }
+    };
 }
 
 module.exports = new TovarsController();

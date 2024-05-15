@@ -17,7 +17,7 @@ export const TovarItem: FC<ISneaker> = ({ idtovar, name, price, img, sizes, colo
     <div  className="pizza-block">
       <img
         className="pizza-block__image"
-        src="https://cdn.shopify.com/s/files/1/2358/2817/products/air-jordan-1-low-og-sp-travis-scott-olive-1.png?v=1679486047&width=1940"
+        src={`http://127.0.0.1:5050/images/${img}`}
         alt="Pizza"
       />
       <h4 className="pizza-block__title">{name}</h4>

@@ -97,3 +97,5 @@ CREATE TABLE TovarsZakaz(
     FOREIGN KEY (idSize) REFERENCES sizes(idSize),
     PRIMARY KEY (idzakaz, idTovar, idColor, idSize)
 );
+
+

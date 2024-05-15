@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import { selectAuth } from '../../redux/auth/selectors';
 import { useSelector } from 'react-redux';
 import TovarsService from '../../service/TovarsService';
+import axios from 'axios';
 
 interface ModalEditProps {
     active: boolean;
@@ -16,6 +17,8 @@ const ModalAdd: FC<ModalEditProps> = ({ active, setActive }) => {
     const [price, setPrice] = useState<string>('');
     const [selectedSizes, setSelectedSizes] = useState<number[]>([]);
     const [selectedColors, setSelectedColors] = useState<number[]>([]);
+    const [image, setImage] = useState<File>(); // Стейт для хранения выбранного изображения
+    const [imagePath, setImagePath] = useState<string>("");
 
     const sizes = [
         { id: 1, size: 36 },
@@ -55,21 +58,55 @@ const ModalAdd: FC<ModalEditProps> = ({ active, setActive }) => {
         }
     };
 
-    async function handleAddToCart()  {
-        const item = {
-            idCompany:idcompany,
-            name:name,
-            img: "https://cdn.shopify.com/s/files/1/2358/2817/products/air-jordan-1-low-og-sp-travis-scott-olive-1.png?v=1679486047&width=1940",
-            description:description,
-            brandName:brand,
-            price: parseInt(price),
-            sizes: selectedSizes,
-            color: selectedColors
-          };
-        const res = await TovarsService.createTovars(item)
-        console.log(res.data)
-        window.location.reload(); window.location.reload(); window.location.reload();
+    const sendFile = async () => {
+        try {
+            if (image) { 
+                const data = new FormData();
+                data.append('picture', image);
+        
+                const res = await axios.post('http://127.0.0.1:5050/api/tovars/uploadImage', data, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+    
+                setImagePath(res.data.path);
+            } else {
+                console.error('No image selected.');
+            }
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        }
     };
+    
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+            setImage(file);
+        }
+        sendFile();
+    };
+
+    
+    const handleAddToCart = async () =>  {
+
+    console.log('Image Path:', imagePath);
+    console.log(image)
+    const item = {
+        idCompany: idcompany,
+        name: name,
+        img: `${image?.name}`, // Use imagePath instead of image
+        description: description,
+        brandName: brand,
+        price: parseInt(price),
+        sizes: selectedSizes,
+        color: selectedColors
+    };
+
+    // Call the service to create the item
+    const res = await TovarsService.createTovars(item);
+    console.log(res.data);
+};
 
     return (
         <div className={`modal modal--edit ${active ? 'modal__active' : ""}`}  >
@@ -86,7 +123,13 @@ const ModalAdd: FC<ModalEditProps> = ({ active, setActive }) => {
                     <form>
                         <div className="modal-form">
                         <div className="avtr profile__avtr">
-                            <img src="" alt="" />
+                            <img src={`${image}`} alt="" />
+                        </div>
+                        <div className="modal-form">
+                            <div className="inputBlock auth-form__inputBlock">
+                                <label>Изображение</label>
+                                <input type="file" accept="image/*" onChange={handleImageUpload} />
+                            </div>
                         </div>
                             <div className="inputBlock auth-form__inputBlock">
                                 <label>Название</label>

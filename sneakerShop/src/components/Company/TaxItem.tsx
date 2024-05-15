@@ -11,7 +11,7 @@ export const TaxItem: FC<ITax> = ({idtovar, tovar_name, tovar_description, tovar
         <div key={idtovar} className="pizza-block pizza-block__tax">
             <img
                 className="pizza-block__image"
-                src={`https://cdn.shopify.com/s/files/1/2358/2817/products/air-jordan-1-low-og-sp-travis-scott-olive-1.png?v=1679486047&width=1940`} 
+                src={`http://127.0.0.1:5050/images/${tovar_img}`} 
                 alt={tovar_name} 
             />
             <h4 className="pizza-block__title">{tovar_name}</h4>

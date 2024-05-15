@@ -3,8 +3,7 @@ import { selectAuth } from '../../redux/auth/selectors';
 import { useSelector } from 'react-redux';
 import TovarsService from '../../service/TovarsService';
 import { IBrand } from '../../models/IBrand';
-
-
+import axios from 'axios';
 
 interface ModalEditProps {
     active: boolean;
@@ -16,10 +15,11 @@ const ModalEdit: FC<ModalEditProps> = ({ active, setActive, idTovar }) => {
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [price, setPrice] = useState<string>('');
+    const [img, setImg] = useState<string>('');
     const [selectedSizes, setSelectedSizes] = useState<number[]>([]);
     const [selectedColors, setSelectedColors] = useState<number[]>([]);
     const [brand, setBrand] = useState<string>('');
-
+    const [image, setImage] = useState<File>(); // Стейт для хранения выбранного изображения
     const { idcompany } = useSelector(selectAuth);
 
     let colors = [
@@ -42,6 +42,7 @@ const ModalEdit: FC<ModalEditProps> = ({ active, setActive, idTovar }) => {
         { id: 8, size: 43, status: ""  },
         { id: 9, size: 44, status: ""  },
     ];
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -49,7 +50,6 @@ const ModalEdit: FC<ModalEditProps> = ({ active, setActive, idTovar }) => {
                 setName(tovar.data.name);
                 setDescription(tovar.data.description);
                 setPrice(tovar.data.price.toString());
-                
                 
                 const brandsResponse = await TovarsService.getBrands();
                 const brands: IBrand[] = brandsResponse.data;
@@ -61,12 +61,10 @@ const ModalEdit: FC<ModalEditProps> = ({ active, setActive, idTovar }) => {
                     console.log("Бренд не найден");
                 }
     
-                
                 colors = colors.map(color => ({
                     ...color,
                     status: tovar.data.colors.includes(color.color) ? "active" : ""
                 }));
-                console.log(colors)
                 const activeColor = colors.filter(color => color.status === "active").map(color => color.id);
                 setSelectedColors(activeColor);
 
@@ -76,6 +74,7 @@ const ModalEdit: FC<ModalEditProps> = ({ active, setActive, idTovar }) => {
                 }));
                 const activeSizes = sizes.filter(size => size.status === "active").map(size => size.id);
                 setSelectedSizes(activeSizes);
+                setImg(tovar.data.img);
                 
             } catch (error) {
                 console.error("Ошибка при загрузке данных:", error);
@@ -84,6 +83,83 @@ const ModalEdit: FC<ModalEditProps> = ({ active, setActive, idTovar }) => {
     
         fetchData();
     }, [idTovar]);
+
+    const handleSizeSelection = (id: number) => {
+        if (selectedSizes.includes(id)) {
+            setSelectedSizes(selectedSizes.filter(sizeId => sizeId !== id));
+        } else {
+            setSelectedSizes([...selectedSizes, id]);
+        }
+    };
+
+    const handleColorSelection = (id: number) => {
+        if (selectedColors.includes(id)) {
+            setSelectedColors(selectedColors.filter(colorId => colorId !== id));
+        } else {
+            setSelectedColors([...selectedColors, id]);
+        }
+    }
+
+    const sendFile = async () => {
+        try {
+            if (image) { 
+                const data = new FormData();
+                data.append('picture', image);
+        
+                const res = await axios.post('http://127.0.0.1:5050/api/tovars/uploadImage', data, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+    
+                
+            } else {
+                console.error('No image selected.');
+            }
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        }
+    };
+    
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+            setImage(file);
+        }
+        sendFile();
+    };
+
+    async function handleUpdate() {
+
+        sendFile();
+        const item = {
+            idTovar: idTovar.toString(),
+            idCompany: idcompany,
+            name: name,
+            description: description,
+            brandName: brand,
+            img: `${image?.name}`,
+            price: parseInt(price),
+            sizes: selectedSizes,
+            color: selectedColors
+        }
+        console.log(item)
+        const res = await TovarsService.updateTovars(item);
+        console.log(res.data)
+        
+    }
+
+    async function deleteTovars(){
+        try {
+            const res = await TovarsService.deleteTovars(idTovar);
+            console.log(res.data);
+        } catch (error) {
+            console.error('Ошибка при удалении товара:', error);
+        }
+        window.location.reload();
+        window.location.reload();
+    }
+
     function translateColorToEnglish(color: string): string {
         switch (color) {
             case 'Красные':
@@ -105,45 +181,8 @@ const ModalEdit: FC<ModalEditProps> = ({ active, setActive, idTovar }) => {
             default:
                 return color;
         }
-        
-    }
-    const handleSizeSelection = (id: number) => {
-        if (selectedSizes.includes(id)) {
-            setSelectedSizes(selectedSizes.filter(sizeId => sizeId !== id));
-        } else {
-            setSelectedSizes([...selectedSizes, id]);
-        }
-    };
-
-    const handleColorSelection = (id: number) => {
-        if (selectedColors.includes(id)) {
-            setSelectedColors(selectedColors.filter(colorId => colorId !== id));
-        } else {
-            setSelectedColors([...selectedColors, id]);
-        }
-    }
-    async function handleUpdate(){
-        const item = {
-            idTovar: idTovar.toString(),
-            idCompany: idcompany,
-            name: name,
-            description: description,
-            brandName: brand,
-            img: "https://cdn.shopify.com/s/files/1/2358/2817/products/air-jordan-1-low-og-sp-travis-scott-olive-1.png?v=1679486047&width=1940",
-            price: parseInt(price),
-            sizes: selectedSizes,
-            color: selectedColors
-        }
-        console.log(item)
-        const res = await TovarsService.updateTovars(item);
-        console.log(res.data)
-    }
-    async function deleteTovars(){
-        const res = await TovarsService.deleteTovars(idTovar);
-        console.log(res.data)
     }
     
-
     return (
         <div className={`modal modal--edit ${active ? 'modal__active' : ""}`} >
             <div className="modal-body">
@@ -158,8 +197,14 @@ const ModalEdit: FC<ModalEditProps> = ({ active, setActive, idTovar }) => {
                 <div className="content modal__content">
                     <form>
                         <div className="modal-form">
-                        <div className="avtr profile__avtr">
-                            <img src="" alt="" />
+                            <div className="avtr profile__avtr">
+                                <img src={`http://localhost:5050/images/${img}`} alt="" />
+                            </div>
+                            <div className="modal-form">
+                            <div className="inputBlock auth-form__inputBlock">
+                                <label>Изображение</label>
+                                <input type="file" accept="image/*" onChange={handleImageUpload} />
+                            </div>
                         </div>
                             <div className="inputBlock auth-form__inputBlock">
                                 <label>Название</label>
@@ -184,6 +229,7 @@ const ModalEdit: FC<ModalEditProps> = ({ active, setActive, idTovar }) => {
                                 <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Цена" />
                             </div>
                         </div>
+                        
                     </form>
                     <div className="modal__sizeColor">
                         <div className="colorblock tovarPage__colorblock">

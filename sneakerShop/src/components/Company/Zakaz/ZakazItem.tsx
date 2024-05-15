@@ -8,6 +8,7 @@ export interface IZakaz {
 }
 export const ZakazItem: FC<IZakaz> = ({ idzakaz, tovars }) => {
 
+
     return (
         <div className="zakaz-item">
             <div className="zakaz-item__header">
