@@ -17,6 +17,7 @@ import CompanyTax from './pages/CompanyTax'
 import CompanyTovars from './pages/CompanyTovars'
 import CompanyZakazs from './pages/CompanyZakazs'
 import { Order } from './pages/Order'
+import ManagerLogin from './components/Manager/Login'
 
 function App() {
   const dispatch = useAppDispatch();
@@ -73,8 +74,8 @@ function App() {
               <Route path="/auth" element={<Auth />} />
               <Route path="/cart" element={<Cart />} />
               
-              <Route path="/admin/login" element={<Cart />} />
-              <Route path="/admin" element={<Cart />} />
+              <Route path="/admin/login" element={<ManagerLogin />} />
+              
               <Route path="/admin/zakazs" element={<Cart />} />
               <Route path="/admin/companys" element={<Cart />} />
               <Route path="/admin/tovars" element={<Cart />} />

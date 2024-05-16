@@ -443,6 +443,8 @@ body {
             &__inputBlock{
                 margin-bottom: 29px;
             }
+
+            
         }
     }
     .companydescription{
@@ -506,6 +508,18 @@ body {
                     margin-right: 16px;
                 }
             }
+        }
+        
+    }
+}
+.auth-form{
+
+    &__manager{
+        padding: 0px 200px;
+        
+
+        .inputBlock{
+            margin-bottom: 20px;
         }
         
     }
